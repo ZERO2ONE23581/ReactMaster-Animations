@@ -14,13 +14,13 @@ interface ICoin {
 
 function Coins() {
   const [coins, setCoins] = useState<ICoin[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
       const response = await fetch("https://api.coinpaprika.com/v1/coins");
       const json = await response.json();
       setCoins(json.slice(0, 10));
-      setLoading(true);
+      setLoading(false);
     })();
   }, []);
   return (
@@ -30,6 +30,8 @@ function Coins() {
       </header>
       <main>
         {loading ? (
+          <h1>"Loading..."</h1>
+        ) : (
           <ul>
             {coins.map((coin) => (
               <Link to={coin.id} state={coin.name}>
@@ -45,8 +47,6 @@ function Coins() {
               </Link>
             ))}
           </ul>
-        ) : (
-          <h1>"Loading..."</h1>
         )}
       </main>
     </Container>
