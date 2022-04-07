@@ -8,16 +8,33 @@ interface ILocation {
 function Coins() {
   const { coinId } = useParams();
   const [loading, setLoading] = useState(false);
-
-  //state
   const { state } = useLocation() as ILocation;
+
+  const [info, setInfo] = useState({});
+  const [priceInfo, setPriceInfo] = useState({});
+
+  console.log(info);
+  console.log(priceInfo);
+
+  useEffect(() => {
+    (async () => {
+      const infoData = await (
+        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+      ).json();
+      const priceData = await (
+        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+      ).json();
+      setInfo(infoData);
+      setPriceInfo(priceData);
+    })();
+  }, []);
 
   return (
     <Container>
       <header>
         <h1>{state}</h1>
       </header>
-      <main>{loading ? null : <h1>"Loading..."</h1>}</main>
+      <main>{loading ? <span>{}</span> : <h1>"Loading..."</h1>}</main>
     </Container>
   );
 }
