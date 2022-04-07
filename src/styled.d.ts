@@ -5,6 +5,6 @@ declare module "styled-components" {
     //여기 안에서 테마정의를 확장함.
     textColor: string;
     bgColor: string;
-    btnColor: string;
+    accentColor: string;
   }
 }
