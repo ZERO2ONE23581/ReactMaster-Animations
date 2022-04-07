@@ -2,12 +2,16 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
+import Helmet from "react-helmet";
 
 function Coins() {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
   return (
     <Container>
+      <Helmet>
+        <title>Top10 Crypto Currency</title>
+      </Helmet>
       <header>
         <h1>Top10 Crypto Currency</h1>
       </header>

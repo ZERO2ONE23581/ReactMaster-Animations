@@ -1,11 +1,12 @@
 import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
 import ReactApexChart from "react-apexcharts";
-import { textChangeRangeNewSpan } from "typescript";
 
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () =>
-    fetchCoinHistory(coinId)
+  const { isLoading, data } = useQuery<IHistorical[]>(
+    ["ohlcv", coinId],
+    () => fetchCoinHistory(coinId),
+    { refetchInterval: 10000 }
   );
   return (
     <div>
@@ -21,8 +22,24 @@ function Chart({ coinId }: ChartProps) {
             },
           ]}
           options={{
+            tooltip: {
+              y: {
+                formatter: (value) => `$${value.toFixed(3)}`,
+              },
+            },
+            fill: {
+              type: "gradient",
+              gradient: { gradientToColors: ["blue"], stops: [0, 100] },
+            },
+            colors: ["#0be881"],
             yaxis: { show: false },
-            xaxis: { labels: { show: false }, axisTicks: { show: false } },
+            xaxis: {
+              type: "datetime",
+              categories: data?.map((price) => price.time_close) ?? [],
+              labels: { show: false },
+              axisTicks: { show: false },
+              axisBorder: { show: false },
+            },
             stroke: { curve: "smooth", width: 10 },
             theme: { mode: "dark" },
             chart: {
