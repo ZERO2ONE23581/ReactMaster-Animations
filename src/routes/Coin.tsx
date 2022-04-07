@@ -1,8 +1,68 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import styled from "styled-components";
 
-function Coin() {
-  const { coinId } = useParams();
-  return <h1>Coin: {coinId}</h1>;
+interface ILocation {
+  state: string;
 }
+function Coins() {
+  const { coinId } = useParams();
+  const [loading, setLoading] = useState(false);
 
-export default Coin;
+  //state
+  const { state } = useLocation() as ILocation;
+
+  return (
+    <Container>
+      <header>
+        <h1>{state}</h1>
+      </header>
+      <main>{loading ? null : <h1>"Loading..."</h1>}</main>
+    </Container>
+  );
+}
+export default Coins;
+
+const Container = styled.section`
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  header {
+    h1 {
+      font-size: 3rem;
+      color: ${(props) => props.theme.accentColor};
+    }
+  }
+  main {
+    h1 {
+      font-size: 2.5rem;
+      color: ${(props) => props.theme.accentColor};
+      text-align: center;
+      margin-top: 10%;
+    }
+    width: 70%;
+    ul {
+      margin: 30px;
+      li {
+        margin: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: ${(props) => props.theme.textColor};
+        color: ${(props) => props.theme.bgColor};
+        padding: 20px 40px;
+        border-radius: 15px;
+        span {
+          font-size: 1.6rem;
+          font-weight: bold;
+        }
+        img {
+          width: 3rem;
+          height: 3rem;
+        }
+      }
+    }
+  }
+`;

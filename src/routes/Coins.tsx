@@ -32,11 +32,17 @@ function Coins() {
         {loading ? (
           <ul>
             {coins.map((coin) => (
-              <li key={coin.id}>
-                <Link to={coin.id}>
-                  <a>{coin.name} &rarr;</a>{" "}
-                </Link>
-              </li>
+              <Link to={coin.id} state={coin.name}>
+                <a>
+                  <li key={coin.id}>
+                    <span>{coin.name} &rarr;</span>
+                    <img
+                      src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}
+                      alt="코인로고 이미지"
+                    />
+                  </li>
+                </a>
+              </Link>
             ))}
           </ul>
         ) : (
@@ -73,12 +79,21 @@ const Container = styled.section`
       margin: 30px;
       li {
         margin: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         background-color: ${(props) => props.theme.textColor};
         color: ${(props) => props.theme.bgColor};
-        padding: 20px;
+        padding: 20px 40px;
         border-radius: 15px;
-        text-align: start;
-        font-size: 1.2rem;
+        span {
+          font-size: 1.6rem;
+          font-weight: bold;
+        }
+        img {
+          width: 3rem;
+          height: 3rem;
+        }
       }
     }
   }
