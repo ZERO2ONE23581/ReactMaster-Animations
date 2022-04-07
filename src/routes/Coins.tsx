@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 interface ICoin {
   id: string;
@@ -13,27 +14,20 @@ interface ICoin {
 }
 
 function Coins() {
-  const [coins, setCoins] = useState<ICoin[]>([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    (async () => {
-      const response = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await response.json();
-      setCoins(json.slice(0, 10));
-      setLoading(false);
-    })();
-  }, []);
+  //react query는 데이터를 cash에 저장하기에, coin 페이지에서 -> coins 페이지로 돌아왔을때 loading이 보이지 않는다!
+  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
+
   return (
     <Container>
       <header>
-        <h1>Crypto</h1>
+        <h1>Top 10 Crypto</h1>
       </header>
       <main>
-        {loading ? (
+        {isLoading ? (
           <h1>"Loading..."</h1>
         ) : (
           <ul>
-            {coins.map((coin) => (
+            {data?.slice(0, 10).map((coin) => (
               <Link to={coin.id} state={coin.name}>
                 <a>
                   <li key={coin.id}>
