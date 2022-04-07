@@ -1,27 +1,37 @@
-import React, { useState } from "react";
-import Circle from "./Circle";
+import styled from "styled-components";
 
 function App() {
-  const [value, setValue] = useState("");
-
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const {
-      currentTarget: { value },
-    } = event;
-    setValue(value);
-  };
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(value);
-  };
-
   return (
-    <form onSubmit={onSubmit}>
-      <input onChange={onChange} value={value} type="text" placeholder="username" />
-      <button>Log in</button>
-    </form>
+    <Container>
+      <H1>HELLO WORLD</H1>
+      <button>START</button>
+    </Container>
   );
 }
 
 export default App;
+
+const Container = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 2rem;
+    background-color: inherit;
+    color: ${(props) => props.theme.textColor};
+    &:hover {
+      background-color: ${(props) => props.theme.btnColor};
+      color: black;
+    }
+  }
+`;
+const H1 = styled.h1`
+  color: ${(props) => props.theme.textColor};
+  font-size: 4rem;
+`;
