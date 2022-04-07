@@ -1,5 +1,5 @@
-function Price() {
-  return <div>Price</div>;
+function Chart() {
+  return <div>Chart</div>;
 }
 
-export default Price;
+export default Chart;

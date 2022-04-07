@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useMatch } from "react-router-dom";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import Chart from "./Chart";
@@ -67,11 +68,16 @@ interface IPriceData {
 function Coins() {
   const { coinId } = useParams();
   const { state } = useLocation() as ILocation;
-  console.log(state);
 
   const [loading, setLoading] = useState(true);
   const [info, setInfo] = useState<IInfoData>();
   const [priceInfo, setPriceInfo] = useState<IPriceData>();
+
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
+
+  console.log("PRICE: ", priceMatch);
+  console.log("CHART: ", chartMatch);
 
   useEffect(() => {
     (async () => {
@@ -86,7 +92,6 @@ function Coins() {
       setLoading(false);
     })();
   }, [coinId]);
-  console.log(coinId);
   return (
     <Container>
       <header>
@@ -96,37 +101,66 @@ function Coins() {
         {loading ? (
           <h1>"Loading..."</h1>
         ) : (
-          <section>
-            <article>
-              <ul>
-                <li>Rank: {info?.rank}</li>
-                <li>Symbol: {info?.symbol}</li>
-                <li>Open Source: {info?.open_source ? "YES" : "NO"}</li>
-              </ul>
-            </article>
-            <article>
-              <p>{info?.description}</p>
-            </article>
-            <article>
-              <ul>
-                <li>Total Supply: {priceInfo?.total_supply}</li>
-                <li>Max Supply: {priceInfo?.max_supply}</li>
-              </ul>
-            </article>
-          </section>
+          <>
+            <section>
+              <article>
+                <ul>
+                  <li>Rank: {info?.rank}</li>
+                  <li>Symbol: {info?.symbol}</li>
+                  <li>Open Source: {info?.open_source ? "YES" : "NO"}</li>
+                </ul>
+              </article>
+              <article>
+                <p>{info?.description}</p>
+              </article>
+              <article>
+                <ul>
+                  <li>Total Supply: {priceInfo?.total_supply}</li>
+                  <li>Max Supply: {priceInfo?.max_supply}</li>
+                </ul>
+              </article>
+              <div>
+                <Btn isActive={chartMatch !== null}>
+                  <Link to={`/${coinId}/chart`}>CHART</Link>
+                </Btn>
+                <Btn isActive={priceMatch !== null}>
+                  <Link to={`/${coinId}/price`}>PRICE</Link>
+                </Btn>
+              </div>
+            </section>
+            <section>
+              <Routes>
+                <Route path="chart" element={<Chart />}></Route>
+                <Route path="price" element={<Price />}></Route>
+              </Routes>
+            </section>
+          </>
         )}
-        <Routes>
-          <Route path="price" element={<Price />}></Route>
-          <Route path="chart" element={<Chart />}></Route>
-        </Routes>
       </main>
     </Container>
   );
 }
 export default Coins;
 
+const Btn = styled.button<{ isActive: boolean }>`
+  width: 60%;
+  border: none;
+  border-radius: 20px;
+  font-size: 1.3rem;
+  padding: 15px;
+  background-color: ${(props) => props.theme.accentColor};
+  color: ${(props) => (props.isActive ? props.theme.textColor : props.theme.bgColor)};
+  a {
+    display: block;
+  }
+`;
+
 const Container = styled.section`
   section {
+    div {
+      display: flex;
+      gap: 5%;
+    }
     font-size: 1.6rem;
     padding: 50px;
     min-width: 50%;
