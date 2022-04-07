@@ -3,24 +3,13 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "../api";
 
-interface ICoin {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  is_new: boolean;
-  is_active: boolean;
-  type: string;
-}
-
 function Coins() {
-  //react query는 데이터를 cash에 저장하기에, coin 페이지에서 -> coins 페이지로 돌아왔을때 loading이 보이지 않는다!
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
   return (
     <Container>
       <header>
-        <h1>Top 10 Crypto</h1>
+        <h1>Top10 Crypto Currency</h1>
       </header>
       <main>
         {isLoading ? (
@@ -49,44 +38,53 @@ function Coins() {
 
 export default Coins;
 
+interface ICoin {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
 const Container = styled.section`
-  margin-top: 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  header {
-    h1 {
-      font-size: 3rem;
-      color: ${(props) => props.theme.accentColor};
-    }
+  margin: 0 auto;
+  padding: 20px;
+  width: 40%;
+  h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin: 50px auto;
+    color: ${(props) => props.theme.accentColor};
   }
   main {
-    h1 {
-      font-size: 2.5rem;
-      color: ${(props) => props.theme.accentColor};
-      text-align: center;
-      margin-top: 10%;
-    }
     width: 70%;
+    margin: 0 auto;
     ul {
-      margin: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
       li {
-        margin: 15px;
+        padding: 10px 20px;
+        border: 1px solid ${(props) => props.theme.textColor};
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background-color: ${(props) => props.theme.textColor};
-        color: ${(props) => props.theme.bgColor};
-        padding: 20px 40px;
-        border-radius: 15px;
+        &:hover {
+          border: 1px solid ${(props) => props.theme.accentColor};
+          color: ${(props) => props.theme.accentColor};
+        }
+        color: ${(props) => props.theme.textColor};
         span {
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           font-weight: bold;
+          &:hover {
+          }
         }
         img {
-          width: 3rem;
-          height: 3rem;
+          width: 2.5rem;
+          height: 2.5em;
         }
       }
     }

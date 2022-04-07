@@ -1,9 +1,89 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { useMatch } from "react-router-dom";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
+
+function Coins() {
+  const { coinId } = useParams();
+  const { state } = useLocation() as ILocation;
+
+  //useMatch
+  const priceMatch = useMatch("/:coinId/price");
+  const chartMatch = useMatch("/:coinId/chart");
+
+  //React Query
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(
+    ["info", coinId!],
+    () => fetchCoinInfo(coinId!)
+  );
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<ITickersData>(
+    ["tickers", coinId!],
+    () => fetchCoinTickers(coinId!)
+  );
+
+  const loading = infoLoading || tickersLoading;
+
+  return (
+    <Container>
+      <header>
+        <h1>{state ? state : loading ? "Loading..." : infoData?.name}</h1>
+      </header>
+      <main>
+        {loading ? (
+          <h1>"Loading..."</h1>
+        ) : (
+          <>
+            <section>
+              <article>
+                <ul>
+                  <li>
+                    <span>Rank: </span>
+                    <span>{infoData?.rank}</span>
+                  </li>
+                  <li>
+                    <span>Symbol: </span>
+                    <span>{infoData?.symbol}</span>
+                  </li>
+                  <li>
+                    <span>Total Supply: </span>
+                    <span>{tickersData?.total_supply}</span>
+                  </li>
+                  <li>
+                    <span>Max Supply: </span>
+                    <span>{tickersData?.max_supply}</span>
+                  </li>
+                </ul>
+              </article>
+              <article>
+                <p>{infoData?.description}</p>
+              </article>
+              <article>
+                <div>
+                  <Btn isActive={chartMatch !== null}>
+                    <Link to={`/${coinId}/chart`}>CHART</Link>
+                  </Btn>
+                  <Btn isActive={priceMatch !== null}>
+                    <Link to={`/${coinId}/price`}>PRICE</Link>
+                  </Btn>
+                </div>
+              </article>
+            </section>
+            <section>
+              <Routes>
+                <Route path="chart" element={<Chart coinId={coinId as string} />}></Route>
+                <Route path="price" element={<Price />}></Route>
+              </Routes>
+            </section>
+          </>
+        )}
+      </main>
+    </Container>
+  );
+}
+export default Coins;
 
 interface ILocation {
   state: string;
@@ -33,7 +113,7 @@ interface IInfoData {
   last_data_at: string;
 }
 
-interface IPriceData {
+interface ITickersData {
   id: string;
   name: string;
   symbol: string;
@@ -65,142 +145,57 @@ interface IPriceData {
   };
 }
 
-function Coins() {
-  const { coinId } = useParams();
-  const { state } = useLocation() as ILocation;
-
-  const [loading, setLoading] = useState(true);
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
-
-  const priceMatch = useMatch("/:coinId/price");
-  const chartMatch = useMatch("/:coinId/chart");
-
-  console.log("PRICE: ", priceMatch);
-  console.log("CHART: ", chartMatch);
-
-  useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [coinId]);
-  return (
-    <Container>
-      <header>
-        <h1>{state ? state : loading ? "Loading..." : info?.name}</h1>
-      </header>
-      <main>
-        {loading ? (
-          <h1>"Loading..."</h1>
-        ) : (
-          <>
-            <section>
-              <article>
-                <ul>
-                  <li>Rank: {info?.rank}</li>
-                  <li>Symbol: {info?.symbol}</li>
-                  <li>Open Source: {info?.open_source ? "YES" : "NO"}</li>
-                </ul>
-              </article>
-              <article>
-                <p>{info?.description}</p>
-              </article>
-              <article>
-                <ul>
-                  <li>Total Supply: {priceInfo?.total_supply}</li>
-                  <li>Max Supply: {priceInfo?.max_supply}</li>
-                </ul>
-              </article>
-              <div>
-                <Btn isActive={chartMatch !== null}>
-                  <Link to={`/${coinId}/chart`}>CHART</Link>
-                </Btn>
-                <Btn isActive={priceMatch !== null}>
-                  <Link to={`/${coinId}/price`}>PRICE</Link>
-                </Btn>
-              </div>
-            </section>
-            <section>
-              <Routes>
-                <Route path="chart" element={<Chart />}></Route>
-                <Route path="price" element={<Price />}></Route>
-              </Routes>
-            </section>
-          </>
-        )}
-      </main>
-    </Container>
-  );
-}
-export default Coins;
-
-const Btn = styled.button<{ isActive: boolean }>`
-  width: 60%;
-  border: none;
-  border-radius: 20px;
-  font-size: 1.3rem;
-  padding: 15px;
-  background-color: ${(props) => props.theme.accentColor};
-  color: ${(props) => (props.isActive ? props.theme.textColor : props.theme.bgColor)};
-  a {
-    display: block;
-  }
-`;
-
 const Container = styled.section`
-  section {
-    div {
-      display: flex;
-      gap: 5%;
-    }
-    font-size: 1.6rem;
-    padding: 50px;
-    min-width: 50%;
-    margin: 0 auto;
-    ul {
-      font-size: 1.3rem;
-      border-radius: 20px;
-      padding: 15px 30px;
-      background-color: ${(props) => props.theme.accentColor};
-      display: flex;
-      justify-content: space-between;
-    }
-    article {
-      background-color: ${(props) => props.theme.bgColor};
-      color: ${(props) => props.theme.bgColor};
-      margin: 50px 0;
-      p {
-        text-align: center;
-        color: ${(props) => props.theme.accentColor};
-      }
-    }
-  }
-  margin-top: 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  margin: 0 auto;
+  height: 100vh;
+  width: 50%;
+  min-width: 500px;
+  padding: 20px;
+  text-align: center;
+  color: ${(props) => props.theme.accentColor};
   header {
     h1 {
       font-size: 3rem;
-      color: ${(props) => props.theme.accentColor};
+      margin-top: 100px;
     }
   }
   main {
-    h1 {
-      font-size: 2.5rem;
-      color: ${(props) => props.theme.accentColor};
-      text-align: center;
-
-      margin-top: 10%;
+    padding: 50px 20px;
+    section {
+      font-size: 1.2rem;
+      article {
+        ul {
+          border: 1px solid ${(props) => props.theme.textColor};
+          color: ${(props) => props.theme.textColor};
+          background-color: ${(props) => props.theme.bgColor};
+          padding: 20px;
+          display: flex;
+          justify-content: space-between;
+        }
+        p {
+          font-size: 1.4em;
+          text-align: center;
+          padding: 50px 0;
+          color: ${(props) => props.theme.accentColor};
+        }
+        div {
+          display: flex;
+        }
+      }
     }
+  }
+`;
+const Btn = styled.button<{ isActive: boolean }>`
+  font-size: 1.4rem;
+  width: 100%;
+  padding: 15px;
+  border: 1px solid ${(props) => props.theme.textColor};
+  background-color: ${(props) => props.theme.bgColor};
+  color: ${(props) => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
+  &:hover {
+    border: 1px solid ${(props) => props.theme.accentColor};
+  }
+  a {
+    display: block;
   }
 `;
