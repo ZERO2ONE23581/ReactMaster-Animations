@@ -3,7 +3,6 @@ import { useMatch } from "react-router-dom";
 import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
-import { theme } from "../theme";
 import Chart from "./Chart";
 import Price from "./Price";
 import Helmet from "react-helmet";
@@ -30,7 +29,7 @@ function Coins() {
   );
 
   const loading = infoLoading || tickersLoading;
-  console.log(tickersData);
+
   return (
     <Container>
       <Helmet>

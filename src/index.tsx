@@ -15,5 +15,6 @@ ReactDOM.render(
       </ThemeProvider>
     </QueryClientProvider>
   </React.StrictMode>,
+
   document.getElementById("root")
 );
