@@ -6,6 +6,8 @@ interface IForm {
   name: string;
   userId: string;
   password: string;
+  password2: string;
+  extraError?: string;
 }
 
 export default function Test() {
@@ -13,16 +15,23 @@ export default function Test() {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IForm>();
 
-  const handleValid = (data: any) => {
-    console.log(data);
+  const handleValid = (data: IForm) => {
+    if (data.password !== data.password2) {
+      setError("password", { message: "Passwords doesn't match!" });
+      setError("password2", { message: "Passwords doesn't match!" });
+    }
+    // setError("extraError", { message: "Server Down!" });
   };
+  console.log(errors);
 
   return (
     <Container>
       <h1>React Hook Form</h1>
       <form onSubmit={handleSubmit(handleValid)}>
+        <span>{errors?.extraError?.message}</span>
         <input
           {...register("email", {
             required: "Email Required!",
@@ -43,7 +52,11 @@ export default function Test() {
         />
         <span>{errors?.name?.message}</span>
         <input
-          {...register("userId", { required: "User Id Required!" })}
+          {...register("userId", {
+            required: "User Id Required!",
+            validate: (value) =>
+              value.includes("볼드모트") ? "No 볼드모트 allowed" : true,
+          })}
           type="text"
           placeholder="userId"
         />
@@ -57,6 +70,15 @@ export default function Test() {
           placeholder="password"
         />
         <span>{errors?.password?.message}</span>
+        <input
+          {...register("password2", {
+            required: "Confirm Password Required!",
+            minLength: { value: 5, message: "password lengh is too short" },
+          })}
+          type="text"
+          placeholder="Confirm password"
+        />
+        <span>{errors?.password2?.message}</span>
         <input type="submit" value="Enter" />
       </form>
     </Container>
