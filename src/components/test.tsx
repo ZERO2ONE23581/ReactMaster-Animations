@@ -1,12 +1,20 @@
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
-function ToDoList() {
+interface IForm {
+  email: string;
+  name: string;
+  userId: string;
+  password: string;
+}
+
+export default function Test() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<IForm>();
+
   const handleValid = (data: any) => {
     console.log(data);
   };
@@ -16,32 +24,44 @@ function ToDoList() {
       <h1>React Hook Form</h1>
       <form onSubmit={handleSubmit(handleValid)}>
         <input
-          {...register("email", { required: "Type Email" })}
+          {...register("email", {
+            required: "Email Required!",
+            pattern: {
+              value:
+                /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/,
+              message: "Invalid Email!",
+            },
+          })}
           type="text"
           placeholder="Email"
         />
+        <span>{errors?.email?.message}</span>
         <input
-          {...register("name", { required: "Type Name" })}
+          {...register("name", { required: "Name Required!" })}
           type="text"
           placeholder="name"
         />
+        <span>{errors?.name?.message}</span>
         <input
-          {...register("userId", { required: "Type userId" })}
+          {...register("userId", { required: "User Id Required!" })}
           type="text"
           placeholder="userId"
         />
+        <span>{errors?.userId?.message}</span>
         <input
-          {...register("password", { required: "Type password" })}
+          {...register("password", {
+            required: "Password Required!",
+            minLength: { value: 5, message: "password lengh is too short" },
+          })}
           type="text"
           placeholder="password"
         />
+        <span>{errors?.password?.message}</span>
         <input type="submit" value="Enter" />
       </form>
     </Container>
   );
 }
-
-export default ToDoList;
 
 const Container = styled.section`
   padding: 50px;
