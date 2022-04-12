@@ -4,11 +4,7 @@ import styled from "styled-components";
 import { fetchCoins } from "../api";
 import Helmet from "react-helmet";
 
-interface ICoinsProp {
-  toggleDark: () => void;
-}
-
-function Coins({ toggleDark }: ICoinsProp) {
+function Coins() {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
   return (
@@ -18,7 +14,7 @@ function Coins({ toggleDark }: ICoinsProp) {
       </Helmet>
       <header>
         <h1>Top 10 Crypto Currency</h1>
-        <button onClick={toggleDark}>Toggle Mode</button>
+        <button>Toggle Mode</button>
       </header>
       <main>
         {isLoading ? (
