@@ -2,7 +2,22 @@ import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
 import ReactApexChart from "react-apexcharts";
 
-function Chart({ coinId }: ChartProps) {
+interface IHistorical {
+  time_open: string;
+  time_close: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  market_cap: number;
+}
+interface ChartProps {
+  coinId: string;
+  isDark: boolean;
+}
+
+function Chart({ coinId, isDark }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(
     ["ohlcv", coinId],
     () => fetchCoinHistory(coinId),
@@ -41,7 +56,7 @@ function Chart({ coinId }: ChartProps) {
               axisBorder: { show: false },
             },
             stroke: { curve: "smooth", width: 10 },
-            theme: { mode: "dark" },
+            theme: { mode: isDark ? "dark" : "light" },
             chart: {
               background: "transparent",
               toolbar: { show: false },
@@ -56,18 +71,3 @@ function Chart({ coinId }: ChartProps) {
 }
 
 export default Chart;
-
-interface IHistorical {
-  time_open: string;
-  time_close: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  market_cap: number;
-}
-
-interface ChartProps {
-  coinId: string;
-}

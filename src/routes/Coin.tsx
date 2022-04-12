@@ -7,7 +7,11 @@ import Chart from "./Chart";
 import Price from "./Price";
 import Helmet from "react-helmet";
 
-function Coins() {
+interface ICoinsProp {
+  isDark: boolean;
+}
+
+function Coins({ isDark }: ICoinsProp) {
   const { coinId } = useParams();
   const { state } = useLocation() as ILocation;
 
@@ -84,7 +88,10 @@ function Coins() {
             </section>
             <section>
               <Routes>
-                <Route path="chart" element={<Chart coinId={coinId as string} />}></Route>
+                <Route
+                  path="chart"
+                  element={<Chart isDark={isDark} coinId={coinId as string} />}
+                ></Route>
                 <Route path="price" element={<Price />}></Route>
               </Routes>
             </section>
