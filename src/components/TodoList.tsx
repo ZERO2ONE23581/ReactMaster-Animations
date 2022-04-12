@@ -1,18 +1,33 @@
 import { useForm } from "react-hook-form";
+import { atom, useRecoilState } from "recoil";
 import styled from "styled-components";
 
 interface IForm {
-  toDo?: string;
+  toDo: string;
+}
+interface ITodo {
+  text: string;
+  id: number;
+  category: "TO_DO" | "DOING" | "DONE";
 }
 
-export default function TodoList() {
-  const { register, handleSubmit, setValue } = useForm();
+const toDoState = atom<ITodo[]>({
+  key: "toDo",
+  default: [],
+});
 
-  const handleValid = (data: IForm) => {
-    console.log("+ADD: ", data.toDo);
-    setValue("toDo", ""); // input value를 초기화 해줌
+function TodoList() {
+  const [toDos, setToDos] = useRecoilState(toDoState);
+  //
+  const { register, handleSubmit, setValue } = useForm<IForm>();
+  const handleValid = ({ toDo }: IForm) => {
+    setToDos((oldToDos) => [
+      { text: toDo, id: Date.now(), category: "TO_DO" },
+      ...oldToDos,
+    ]);
+    setValue("toDo", "");
   };
-
+  console.log(toDos);
   //
   return (
     <Container>
@@ -25,9 +40,15 @@ export default function TodoList() {
         />
         <input type="submit" value="Enter" />
       </form>
+      <ul>
+        {toDos.map((toDo) => (
+          <li key={toDo.id}>{toDo.text}</li>
+        ))}
+      </ul>
     </Container>
   );
 }
+export default TodoList;
 
 const Container = styled.section`
   padding: 50px;
