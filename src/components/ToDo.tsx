@@ -10,9 +10,13 @@ function ToDo({ text, category, id }: IToDo) {
     setToDos((oldToDos) => {
       const targetIndex = oldToDos.findIndex((toDo) => toDo.id === id);
       const oldToDo = oldToDos[targetIndex];
-      const newToDo = { text, id, category: name };
-      console.log("REPLACE THE TODO IN THE INDEX-> ", targetIndex, "with -> ", newToDo);
-      return oldToDos;
+      const newToDo = { text, id, category: name as any };
+
+      return [
+        ...oldToDos.slice(0, targetIndex), //back
+        newToDo,
+        ...oldToDos.slice(targetIndex + 1), //front
+      ];
     });
   };
   return (
