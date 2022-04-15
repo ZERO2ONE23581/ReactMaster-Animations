@@ -1,17 +1,24 @@
 import styled from "styled-components";
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, useViewportScroll } from "framer-motion";
 import { useEffect } from "react";
 
 function App() {
   const x = useMotionValue(0);
-  const scale = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
-  useEffect(() => {
-    // x.onChange(() => console.log(x.get()));
-    x.onChange(() => console.log(scale.get()));
-  }, [x]);
+  const rotateZ = useTransform(x, [-800, 800], [-360, 360]);
+  const gradient = useTransform(
+    x,
+    [-800, 800],
+    [
+      "linear-gradient(135deg, rgb(204, 128, 46), rgb(216, 52, 219))",
+      "linear-gradient(135deg, rgb(46, 75, 204), rgb(52, 219, 99))",
+    ]
+  );
+  const { scrollYProgress } = useViewportScroll();
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 2]);
+  //
   return (
-    <Wrapper>
-      <Box style={{ x, scale }} drag="x" dragSnapToOrigin />
+    <Wrapper style={{ background: gradient }}>
+      <Box style={{ x, rotateZ, scale }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
@@ -24,8 +31,8 @@ const Box = styled(motion.div)`
   width: 200px;
   height: 200px;
 `;
-const Wrapper = styled.div`
-  height: 100vh;
+const Wrapper = styled(motion.div)`
+  height: 200vh;
   width: 100vw;
   display: flex;
   justify-content: center;
