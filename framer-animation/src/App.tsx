@@ -2,56 +2,30 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 const boxVars = {
-  start: {
-    opacity: 0,
-    scale: 0.5,
+  hover: {
+    scale: 2,
+    rotateZ: 90,
   },
-  end: {
-    opacity: 1,
+  click: {
     scale: 1,
+    borderRadius: "100%",
+  },
+  drag: {
+    backgroundColor: "rgb(46, 204, 113)",
     transition: {
-      type: "spring",
-      duration: 0.5,
-      bounce: 0.5,
-      delayChildren: 0.5,
-      staggerChildren: 0.2,
+      duration: 5,
     },
-  },
-};
-
-const circleVars = {
-  start: {
-    opacity: 0,
-    y: 10,
-  },
-  end: {
-    opacity: 1,
-    y: 0,
   },
 };
 
 function App() {
   return (
     <Wrapper>
-      <Box variants={boxVars} initial="start" animate="end">
-        <Cricle variants={circleVars} />
-        <Cricle variants={circleVars} />
-        <Cricle variants={circleVars} />
-        <Cricle variants={circleVars} />
-      </Box>
+      <Box variants={boxVars} whileHover="hover" whileTap="click" drag whileDrag="drag" />
     </Wrapper>
   );
 }
 export default App;
-
-const Cricle = styled(motion.div)`
-  place-self: center;
-  background-color: blueviolet;
-  width: 70px;
-  height: 70px;
-  border-radius: 35px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
-`;
 
 const Box = styled(motion.div)`
   border-radius: 40px;
