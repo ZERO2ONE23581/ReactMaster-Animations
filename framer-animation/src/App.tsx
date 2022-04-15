@@ -3,51 +3,54 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
 const boxVars = {
-  invisible: {
-    x: 500,
+  entry: (isBack: boolean) => ({
+    x: isBack ? -500 : 500,
     opacity: 0,
     scale: 0,
-  },
-  visible: {
+  }),
+  center: {
     x: 0,
     opacity: 1,
     scale: 1,
     transition: {
-      duration: 0.5,
+      duration: 0.3,
     },
   },
-  exit: {
-    x: -500,
+  exit: (isBack: boolean) => ({
+    x: isBack ? 500 : -500,
     opacity: 0,
     scale: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.3,
     },
-  },
+  }),
 };
 
 function App() {
   const [visible, setVisible] = useState(1);
-  const nextPlease = () => setVisible((prev) => (prev === 10 ? 10 : prev + 1));
-  const previousPlease = () =>
+  const [back, setBack] = useState(false);
+  const nextPlease = () => {
+    setBack(false);
+    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
+  };
+  const previousPlease = () => {
+    setBack(true);
     setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+  };
   //
   return (
     <Wrapper>
-      <AnimatePresence>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) =>
-          i === visible ? (
-            <Box
-              variants={boxVars}
-              initial="invisible"
-              animate="visible"
-              exit="exit"
-              key={i}
-            >
-              {i}
-            </Box>
-          ) : null
-        )}
+      <AnimatePresence exitBeforeEnter custom={back}>
+        <Box
+          custom={back}
+          variants={boxVars}
+          initial="entry"
+          animate="center"
+          exit="exit"
+          key={visible}
+        >
+          {visible}
+        </Box>
       </AnimatePresence>
       <div>
         <button onClick={nextPlease}>&rarr;</button>
@@ -83,9 +86,9 @@ const Wrapper = styled.section`
   align-items: center;
   div {
     &:nth-of-type(2) {
-      position: absolute;
       width: 200px;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 10px;
