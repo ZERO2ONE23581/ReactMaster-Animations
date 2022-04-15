@@ -1,46 +1,20 @@
 import styled from "styled-components";
-import { motion } from "framer-motion";
-import { useRef } from "react";
-
-const boxVars = {
-  hover: {
-    rotateZ: 90,
-  },
-  click: {
-    borderRadius: "100%",
-  },
-};
+import { motion, useMotionValue } from "framer-motion";
+import { useEffect } from "react";
 
 function App() {
-  const biggerBoxRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  // useEffect(() => {
+  //   x.onChange(() => console.log(x.get()));
+  // }, [x]);
   return (
     <Wrapper>
-      <BiggerBox ref={biggerBoxRef}>
-        <Box
-          drag
-          dragConstraints={biggerBoxRef}
-          dragSnapToOrigin
-          dragElastic={0.5}
-          variants={boxVars}
-          whileHover="hover"
-          whileTap="click"
-        />
-      </BiggerBox>
+      <button onClick={() => x.set(200)}>Click Me</button>
+      <Box style={{ x }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
 export default App;
-
-const BiggerBox = styled.div`
-  background-color: rgb(236, 240, 241);
-  width: 600px;
-  height: 600px;
-  border-radius: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-`;
 
 const Box = styled(motion.div)`
   background-color: white;
