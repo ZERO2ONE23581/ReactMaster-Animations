@@ -4,46 +4,59 @@ import { useState } from 'react';
 
 function App() {
   const [clicked, setClicked] = useState(false);
-  const toggleClicked = () => {
+  const toggle = () => {
     setClicked((prev) => !prev);
   };
   //
   return (
-    <Wrapper onClick={toggleClicked}>
-      <Box>
+    <Wrapper onClick={toggle}>
+      <Grid>
+        <Box layoutId="firstBox" />
+        <Box />
+        <Box />
+        <Box />
+      </Grid>
+      <AnimatePresence>
         {clicked ? (
-          <Circle layoutId="circle" style={{ borderRadius: '20px' }} />
+          <Overlay
+            initial={{ backgroundColor: ' rgba(0, 0, 0, 0)' }}
+            animate={{ backgroundColor: ' rgba(0, 0, 0, 0.8)' }}
+            exit={{ backgroundColor: ' rgba(0, 0, 0, 0)' }}
+          >
+            <Box layoutId="firstBox" style={{ width: 400, height: 200 }} />
+          </Overlay>
         ) : null}
-      </Box>
-      <Box>
-        {!clicked ? (
-          <Circle
-            layoutId="circle"
-            style={{ borderRadius: '50%', scale: '2' }}
-          />
-        ) : null}
-      </Box>
+      </AnimatePresence>
     </Wrapper>
   );
 }
 export default App;
 
-const Circle = styled(motion.div)`
-  background-color: #00a1ff;
-  width: 100px;
-  height: 100px;
-  box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-`;
-
-const Box = styled(motion.div)`
+const Overlay = styled(motion.div)`
+  position: absolute;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
-  height: 400px;
-  border-radius: 50px;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 50vw;
+  gap: 10px;
+  div:first-child,
+  div:last-child {
+    grid-column: span 2;
+  }
+`;
+
+const Box = styled(motion.div)`
+  height: 200px;
+  border-radius: 10px;
   box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px;
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.8);
 `;
 
 const Wrapper = styled.section`
